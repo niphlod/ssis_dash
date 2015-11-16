@@ -1,0 +1,110 @@
+<div class="box-header"><h4 class="box-title">Engine KPI</h4></div>
+<div class="box-body">
+  <div class="col-sm-6 col-lg-4 col-xl-2">
+    <div class="info-box bg-aqua">
+      <span class="info-box-icon"><i class="fa fa-globe"></i></span>
+      <div class="info-box-content">
+        <span class="info-box-text">ALL</span>
+        <span class="info-box-number">{{#with kpi['all']}}{{.}}{{else}}0{{/with}}</span>
+        <div class="progress">
+        <hr />
+        </div>
+        <span class="progress-description">
+          {{#if (env.status != 'all')}}
+          <a data-keymaster="all" on-click="navigate_to" href="{{env.base_url}}/{{env.instance}}/folder/{{env.folder}}/project/{{env.project}}/status/all">View</a>
+          {{/if}}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-4 col-xl-2">
+    <div class="info-box bg-orange">
+      <span class="info-box-icon"><i class="fa fa-paper-plane-o"></i></span>
+      <div class="info-box-content">
+        <span class="info-box-text">RUNNING</span>
+        <span class="info-box-number">{{#with kpi['running']}}{{.}}{{else}}0{{/with}}</span>
+        <div class="progress">
+        <hr />
+        </div>
+        <span class="progress-description">
+        {{#if (env.status != 'running')}}
+          <a data-keymaster="running" on-click="navigate_to" href="{{env.base_url}}/{{env.instance}}/folder/{{env.folder}}/project/{{env.project}}/status/running">View</a>
+        {{/if}}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-4 col-xl-2">
+    <div class="info-box bg-gray">
+      <span class="info-box-icon"><i class="fa fa-ban"></i></span>
+      <div class="info-box-content">
+        <span class="info-box-text">CANCELLED</span>
+        <span class="info-box-number">{{#with kpi['cancelled']}}{{.}}{{else}}0{{/with}}</span>
+        <div class="progress">
+        <hr />
+        </div>
+        <span class="progress-description">
+        {{#if (env.status != 'cancelled')}}
+          <a data-keymaster="cancelled" on-click="navigate_to" href="{{env.base_url}}/{{env.instance}}/folder/{{env.folder}}/project/{{env.project}}/status/cancelled">View</a>
+        {{/if}}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-4 col-xl-2">
+    <div class="info-box bg-red">
+      <span class="info-box-icon"><i class="fa fa-bomb"></i></span>
+      <div class="info-box-content">
+        <span class="info-box-text">FAILED</span>
+        <span class="info-box-number">{{#with kpi['failed']}}{{.}}{{else}}0{{/with}}</span>
+        <div class="progress">
+        <hr />
+        </div>
+        <span class="progress-description">
+        {{#if (env.status != 'failed')}}
+          <a data-keymaster="failed" on-click="navigate_to" href="{{env.base_url}}/{{env.instance}}/folder/{{env.folder}}/project/{{env.project}}/status/failed">View</a>
+        {{/if}}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-4 col-xl-2">
+    <div class="info-box bg-teal">
+      <span class="info-box-icon"><i class="fa fa-stop"></i></span>
+      <div class="info-box-content">
+        <span class="info-box-text">HALTED</span>
+        <span class="info-box-number">{{#with kpi['halted']}}{{.}}{{else}}0{{/with}}</span>
+        <div class="progress">
+        <hr />
+        </div>
+        <span class="progress-description">
+        {{#if (env.status != 'halted')}}
+          <a data-keymaster="halted" on-click="navigate_to" href="{{env.base_url}}/{{env.instance}}/folder/{{env.folder}}/project/{{env.project}}/status/halted">View</a>
+        {{/if}}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-4 col-xl-2">
+    <div class="info-box bg-green">
+      <span class="info-box-icon"><i class="fa fa-thumbs-up"></i></span>
+      <div class="info-box-content">
+        <span class="info-box-text">SUCCEEDED</span>
+        <span class="info-box-number">{{#with kpi['succeeded']}}{{.}}{{else}}0{{/with}}</span>
+        <div class="progress">
+        <hr />
+        </div>
+        <span class="progress-description">
+        {{#if (env.status != 'succeeded')}}
+          <a data-keymaster="succeeded" on-click="navigate_to" href="{{env.base_url}}/{{env.instance}}/folder/{{env.folder}}/project/{{env.project}}/status/succeeded">View</a>
+        {{/if}}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+  {{#if loading}}
+  <div class="overlay">
+    <i class="fa fa-refresh fa-spin"></i>
+  </div>
+  {{/if}}

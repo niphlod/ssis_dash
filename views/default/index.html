@@ -1,0 +1,47 @@
+{{def instance_block(instance):}}
+
+<div class="col-md-4">
+  <div class="box">
+    <div class="box-header with-border"><h3 class="box-title">{{=instance['name']}}</h3></div>
+    <div class="box-body">{{=instance['description']}}</div>
+    <div class="box-footer bg-{{=instance['style']}}">
+    {{=A('Go to Dashboard', _href=URL('console', 'overview', args=instance['name']), _class="btn btn-block bg-%s" % (instance['style']))}}
+    </div>
+  </div>
+</div>
+
+{{return}}
+
+{{extend 'layout.html'}}
+
+{{for group in available_instances:}}
+<div class="row">
+  {{if len(group) == 3:}}
+    {{for instance in group:}}
+      {{instance_block(instance)}}
+    {{pass}}
+  {{elif len(group) == 2:}}
+    {{instance=group[0]}}
+    {{instance_block(instance)}}
+    <div class="col-md-4"></div>
+    {{instance=group[1]}}
+    {{instance_block(instance)}}
+  {{elif len(group) == 1:}}
+    {{instance=group[0]}}
+    <div class="col-md-4"></div>
+    {{instance_block(instance)}}
+    <div class="col-md-4"></div>
+  {{pass}}
+</div>
+{{pass}}
+
+{{if message:}}
+<div class="row">
+  <div class="alert alert-danger alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+    {{=message}}
+  </div>
+</div>
+{{pass}}
+

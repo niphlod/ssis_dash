@@ -1,0 +1,76 @@
+<div class="box-header"><h3 class="box-title">Package: {{decodeURIComponent(env.folder)}} \ {{decodeURIComponent(env.project)}} : Execution {{env.execution}}</h3></div>
+<div class="box-body">
+  <div class="col-sm-6 col-lg-3">
+    <div class="info-box bg-red">
+      <span class="info-box-icon"><i class="fa fa-exclamation"></i></span>
+      <div class="info-box-content">
+        <span class="info-box-text">ERRORS</span>
+        <span class="info-box-number">{{#with pkpi['errors']}}{{.}}{{else}}0{{/with}}</span>
+        <div class="progress">
+        <hr />
+        </div>
+        <span class="progress-description">
+          {{#if (env.execution != 'all' && pkpi['errors'])}}
+          <a on-click="filter_errors" href="{{env.base_url}}/{{env.instance}}/folder/{{env.folder}}/project/{{env.project}}/status/{{env.status}}/package/{{env.package_name}}/execution/{{env.execution}}/errors">View</a>
+          {{/if}}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="info-box bg-orange">
+      <span class="info-box-icon"><i class="fa fa-paper-question"></i></span>
+      <div class="info-box-content">
+        <span class="info-box-text">WARNINGS</span>
+        <span class="info-box-number">{{#with pkpi['warnings']}}{{.}}{{else}}0{{/with}}</span>
+        <div class="progress">
+        <hr />
+        </div>
+        <span class="progress-description">
+          {{#if (env.execution != 'all' && pkpi['warnings'])}}
+          <a on-click="filter_warnings" href="{{env.base_url}}/{{env.instance}}/folder/{{env.folder}}/project/{{env.project}}/status/{{env.status}}/package/{{env.package_name}}/execution/{{env.execution}}/warnings">View</a>
+          {{/if}}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="info-box bg-yellow">
+      <span class="info-box-icon"><i class="fa fa-fire"></i></span>
+      <div class="info-box-content">
+        <span class="info-box-text">MEMORY WARNINGS</span>
+        <span class="info-box-number">{{#with pkpi['memory_warnings']}}{{.}}{{else}}0{{/with}}</span>
+        <div class="progress">
+        <hr />
+        </div>
+        <span class="progress-description">
+          {{#if (env.execution != 'all' && pkpi['memory_warnings'])}}
+          <a on-click="filter_memory_warnings" href="{{env.base_url}}/{{env.instance}}/folder/{{env.folder}}/project/{{env.project}}/status/{{env.status}}/package/{{env.package_name}}/execution/{{env.execution}}/memory_warnings">View</a>
+          {{/if}}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="info-box bg-yellow">
+      <span class="info-box-icon"><i class="fa fa-magnet"></i></span>
+      <div class="info-box-content">
+        <span class="info-box-text">DUPLICATE WARNINGS</span>
+        <span class="info-box-number">{{#with pkpi['duplicate_warnings']}}{{.}}{{else}}0{{/with}}</span>
+        <div class="progress">
+        <hr />
+        </div>
+        <span class="progress-description">
+          {{#if (env.execution != 'all' && pkpi['duplicate_warnings'])}}
+          <a on-click="filter_duplicate_warnings" href="{{env.base_url}}/{{env.instance}}/folder/{{env.folder}}/project/{{env.project}}/status/{{env.status}}/package/{{env.package_name}}/execution/{{env.execution}}/duplicate_warnings">View</a>
+          {{/if}}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+{{#if loading}}
+<div class="overlay">
+  <i class="fa fa-refresh fa-spin"></i>
+</div>
+{{/if}}

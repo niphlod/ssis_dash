@@ -1,0 +1,36 @@
+<div class="box">
+  <div class="box-header">
+    <a class="btn btn-default btn-lg btn-block" href="{{env.base_url}}/../overview/{{env.instance}}"><i class="fa fa-dashboard fa-fw"></i> Dashboard - {{env.instance}}</a>
+    <input id="search_folders" type="text" class="form-control" placeholder="Filter Folders" value="{{search_project}}">
+  </div>
+  <div class="box-body">
+    <div class="panel-group" id="accordion" role="tablist">
+    {{#side_folders:i}}
+      {{#if name.toLowerCase().indexOf(search_project.toLowerCase())!==-1}}
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="heading_{{i}}">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse_{{i}}">
+              <i class="fa fa-folder fa-fw"></i> {{name}}
+            </a>
+          </h4>
+        </div>
+        <div id="collapse_{{i}}" class="panel-collapse collapse {{((name == env.folder) || (search_project.length)) ? 'in' : ''}}" role="tabpanel">
+          <div class="list-group">
+            <a class="list-group-item" on-click="navigate_to" title="All" href="{{env.base_url}}/../overview/{{env.instance}}/folder/{{name}}">All</a>
+              {{#projects}}
+                <a class="list-group-item {{name == env.project ? 'active' : ''}}" on-click="navigate_to" title="{{desc}}" href="{{env.base_url}}/../overview/{{env.instance}}/folder/{{../../name}}/project/{{name}}">{{name}}</a>
+              {{/projects}}
+            </div>
+        </div>
+      </div>
+      {{/if}}
+    {{/side_folders}}
+    </div>
+  </div>
+  {{#if loading}}
+  <div class="overlay">
+    <i class="fa fa-refresh fa-spin"></i>
+  </div>
+  {{/if}}
+</div>

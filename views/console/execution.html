@@ -1,0 +1,108 @@
+{{extend 'layout.html'}}
+
+<div class="row">
+        <div class="col-sm-2 col-md-2" id="side_accordion_container">
+
+        </div>
+        <div class="col-sm-10 col-md-10">
+            <div id="package_kpi" class="box" style="height: 160px;">
+            </div>
+            <div class="box" style="height: 520px;">
+            	<div class="box-header"><h2 class="box-title">Details</h2></div>
+            	<div class="box-body">
+            		<table id="datatable_details" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+					</table>
+            	</div>
+            </div>
+            <div id="package_details" class="row">
+            </div>
+        </div>
+</div>
+
+<script type="text/javascript">
+
+ENV = {{=XML(curr_env)}};
+SSIS_ROUTER.init_env(ENV);
+SSIS_ROUTER.parse_env(window.location.pathname);
+SSIS_RENDER.init_env(ENV);
+$(document).ajaxStart(function() {
+	NProgress.start();
+});
+$(document).ajaxStop(function() {
+	NProgress.done();
+});
+
+function change_url(to_url) {
+	if (Modernizr.history) {
+		history.pushState('', '', to_url);
+	}
+}
+
+$(function() {
+	var dt_details = $('#datatable_details').DataTable(SSIS_TABLES.dt_details);
+	var orig_data = null;
+	Ractive.load({
+		sidebar: 'sidebar.html',
+		package_kpi: 'package_kpi.html'
+	}).then(function(components) {
+		var rsiderbar = new components.sidebar({
+			el: 'side_accordion_container',
+			data: {
+				'side_folders': {},
+				'env': ENV,
+				'loading': true
+			}
+		});
+		var rpackage_kpi = new components.package_kpi({
+			el: 'package_kpi',
+			data: {
+				'pkpi': {},
+				'env': ENV,
+				'loading': true
+			}
+		});
+		rpackage_kpi.on('filter_errors', function(e) {
+			if(key.shift || key.ctrl) return true;
+			e.original.preventDefault();
+			SSIS_TABLES.fill_table(dt_details, SSIS_TABLES.slice_details(orig_data, 'errors'));
+			change_url('./errors');
+		});
+		rpackage_kpi.on('filter_warnings', function(e) {
+			if(key.shift || key.ctrl) return true;
+			e.original.preventDefault();
+			SSIS_TABLES.fill_table(dt_details, SSIS_TABLES.slice_details(orig_data, 'warnings'));
+			change_url('./warnings');
+		});
+		rpackage_kpi.on('filter_memory_warnings', function(e) {
+			if(key.shift || key.ctrl) return true;
+			e.original.preventDefault();
+			SSIS_TABLES.fill_table(dt_details, SSIS_TABLES.slice_details(orig_data, 'memory_warnings'));
+			change_url('./memory_warnings');
+		});
+		rpackage_kpi.on('filter_duplicate', function(e) {
+			if(key.shift || key.ctrl) return true;
+			e.original.preventDefault();
+			SSIS_TABLES.fill_table(dt_details, SSIS_TABLES.slice_details(orig_data, 'duplicate'));
+			change_url('./duplicate');
+		});
+		$.get(SSIS_ROUTER.restUrlFor('folders'), function(data) {
+			rsiderbar.set('side_folders', data);
+			rsiderbar.set('loading', false);
+		});
+		$.get(SSIS_ROUTER.restUrlFor('packagekpi'), function(data) {
+			rpackage_kpi.set('pkpi', data);
+			rpackage_kpi.set('loading', false);
+			$('#package_kpi').css('height', '');
+		});
+		$.get(SSIS_ROUTER.restUrlFor('packageinfo'), function(data) {
+			var newenv = $.extend(ENV, data);
+			rpackage_kpi.set('env', newenv);
+		});
+		$.get(SSIS_ROUTER.restUrlFor('packagedetails'), function(data) {
+			orig_data = data;
+			var newdata = SSIS_TABLES.slice_details(data, ENV.event_name);
+			SSIS_TABLES.fill_table(dt_details, newdata);
+		});
+	}).catch(function() {});
+})
+</script>

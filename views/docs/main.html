@@ -1,0 +1,29 @@
+{{extend 'layout.html'}}
+
+
+<div class="row">
+	<div id="docs" class="col-md-6"></div>
+</div>
+
+
+<style>
+#docs {
+    font-size: 14px;
+}
+
+</style>
+<script>
+$(function() {
+	var content = {{=XML(content)}};
+	$('#docs').html(marked(content));
+});
+$(document).scroll(function(e){
+    var scrollTop = $(document).scrollTop();
+    if(scrollTop > 0){
+        $('.navbar').removeClass('navbar-fixed-top').addClass('navbar-static-top');
+    } else {
+        $('.navbar').removeClass('navbar-static-top').addClass('navbar-fixed-top');
+    }
+});
+</script>
+
