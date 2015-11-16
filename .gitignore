@@ -1,0 +1,21 @@
+*.py[co]
+*.table
+*.db
+*.bak
+*.sqlite
+# Packages
+*.egg
+*.egg-info
+*.log
+dist
+build
+eggs
+errors
+sessions
+uploads
+cache
+sessions/*
+errors/*
+cache/*
+uploads/*
+static/deposit/*
