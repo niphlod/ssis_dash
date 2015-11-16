@@ -11,9 +11,9 @@ distribution. Mainly done to:
 
 BTW: sorry guys, it's my first BIG javascript-frontended-app.
 
-User docs are in [docs/user.md]
+User docs are in (docs/user.md)[docs/user.md]
 
-Installation procedures are on [docs/administration.md]
+Installation procedures are on (docs/administration.md)[docs/administration.md]
 
 Release Notes:
 - public mode (as yorek's one)
