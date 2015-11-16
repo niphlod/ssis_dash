@@ -28,9 +28,9 @@ Release Notes:
 
 
 TODO:
-- Rest API is basically there. Need to choose a solid authentication scheme (JWT?)
+- [ ] Rest API is basically there. Need to choose a solid authentication scheme (JWT?)
   for out-of-band requests
-- UI improvements: ideally this should become a SPA
-- History management: ATM there are some "FIXME" pieces around
-- Refactoring: use consistent names among all code (both python and javascript)
+- [ ] UI improvements: ideally this should become a SPA
+- [ ] History management: ATM there are some "FIXME" pieces around
+- [ ] Refactoring: use consistent names among all code (both python and javascript)
 
