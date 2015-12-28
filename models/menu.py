@@ -27,7 +27,7 @@ response.meta.description = 'SSISDB monitoring'
 response.meta.keywords = 'SSISDB monitoring'
 response.meta.generator = 'Web2py Web Framework'
 
-response.static_version = '0.0.31'
+response.static_version = '0.0.32'
 response.static_version_urls = True
 
 response.menu = [
@@ -51,6 +51,7 @@ static_files = [
     'vendor/raphael.min.js',
     'vendor/morris.min.js',
     'js/signals.min.js',
+    'js/uri-iri.min.js',
     'js/crossroads.min.js',
     'js/ractive.js',
     'js/ractive-load.min.js',

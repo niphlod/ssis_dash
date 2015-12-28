@@ -114,6 +114,7 @@ Permissions are evaluated with a *glob-like* syntax. A few examples are better
 than a thousand words
 
  - every user can see every instance
+
  ```
  [ssis_dash]
  mode = public
@@ -121,6 +122,7 @@ than a thousand words
  [users_permissions] default = *
  ```
  - every user can see only instances starting with *prod*
+
  ```
  [ssis_dash]
  mode = public
@@ -131,6 +133,7 @@ than a thousand words
  ```
  - user *user1@example.com* can see only instances starting with *prod*,
    *user2@example.com* can see only instances starting with *dev*
+
  ```
  [ssis_dash]
  mode = protected
@@ -142,6 +145,7 @@ than a thousand words
  ```
  - user *user1@example.com* can see only *prod_dwh* and *quality_dwh*,
   *user2@example.com* can see only *dev_dwh*
+
  ```
  [ssis_dash]
  mode = protected

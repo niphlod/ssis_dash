@@ -196,7 +196,7 @@ var SSIS_RENDER = (function(_, Morris, console) {
 }(_, Morris, console));
 
 
-var SSIS_ROUTER = (function(_, crossroads, console, $) {
+var SSIS_ROUTER = (function(_, crossroads, console, URI, $) {
 	'use strict';
 	var my = {};
 	var BASE_ENV = {
@@ -334,7 +334,8 @@ var SSIS_ROUTER = (function(_, crossroads, console, $) {
 	});
 
 	my.parse_env = function(currenturl) {
-		var parameters = currenturl.replace(my.ENV.base_url, '');
+		var cururl = URI.normalize(currenturl);
+		var parameters = cururl.replace(my.ENV.base_url, '');
 		overviewRouter.parse(parameters);
 	};
 
@@ -376,7 +377,7 @@ var SSIS_ROUTER = (function(_, crossroads, console, $) {
 
 	return my;
 
-}(_, crossroads, console, $));
+}(_, crossroads, console, URI, $));
 
 
 var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
