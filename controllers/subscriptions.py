@@ -64,6 +64,8 @@ def feed():
     rargs = List(request.raw_args.split('/'))
     fname = "%s.rss" % hashlib.md5('/'.join(rargs)).hexdigest()
     basepath = os.path.join(request.folder, 'private', 'temp_feeds')
+    if not os.path.exists(basepath):
+        os.makedirs(basepath)
     fpath = os.path.join(basepath, fname)
     lock_file = fpath + '.__lock'
     return_cached = os.path.isfile(lock_file)
