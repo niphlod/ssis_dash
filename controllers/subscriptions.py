@@ -23,8 +23,9 @@ import os
 from collections import defaultdict
 import time
 import glob
+import datetime
 
-CACHE_FOR = 600
+CACHE_FOR = 60
 PRUNING = CACHE_FOR * 100
 
 
@@ -107,9 +108,14 @@ def feed():
     title += status != 'all' and ', status %s' % STATUS_CODES[status] or ''
     title += package != 'all' and ', package %s' % package or ''
     items = []
+    now = request.now.strftime('%Y%m%d%H%M%S')
     for entry in res:
         link = URL('console', 'overview', host=True, scheme='https', extension='', args=[request.args(0), 'folder', entry.folder_name, 'project',
                    entry.project_name, 'status', 'all', 'package', entry.package_name, 'execution', entry.execution_id])
+        if entry.elapsed_time_min is None:
+            guid = link + '@' + now
+        else:
+            guid = link + '@now'
         detailed_status = [
             ['Status', STATUS_CODES[entry.status]],
             ['Elapsed (min)', entry.elapsed_time_min]
@@ -139,14 +145,17 @@ def feed():
             detailed_status = detailed_status.xml() + '<hr />' + errors.xml()
         else:
             detailed_status = detailed_status.xml()
+        pubdate = request.utcnow
+        if entry.end_time:
+            pubdate = datetime.datetime.strptime(entry.end_time, '%Y-%m-%d %H:%M:%S')
         items.append(
             CDATARSS2(
                 title="%s - %s - (%s)" % (entry.execution_id, entry.package_name, STATUS_CODES[entry.status]),
                 link=link,
                 author="%s/%s@%s" % (entry.folder_name, entry.project_name, request.args(0)),
-                guid=link + 'now',
+                guid=guid,
                 description=detailed_status,
-                pubDate=entry.start_time.replace(' ', 'T'),
+                pubDate=pubdate,
             )
         )
     rss = rss2.RSS2(title=title,
@@ -156,8 +165,6 @@ def feed():
                     lastBuildDate=request.utcnow,
                     items=items)
     rtn = rss.to_xml(encoding='utf-8')
-    if not os.path.exists(os.path.dirname(fpath)):
-        os.makedirs(os.path.dirname(fpath))
     with open(fpath, 'wb') as g:
         g.write(rtn)
     try:
