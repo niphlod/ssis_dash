@@ -34,11 +34,11 @@ SELECT execution_id
 	,project_lsn
 	,environment
 	,[status]
-	,start_time = format(start_time, 'yyyy-MM-dd HH:mm:ss')
+	,start_time = format(SWITCHOFFSET(start_time, '-00:00'),'yyyy-MM-dd HH:mm:ss')
 	,end_time = format(CASE 
 			WHEN end_time IS NULL
-				THEN dateadd(minute, cast(CEILING(avg_elapsed_time_min) AS INT), start_time)
-			ELSE end_time
+				THEN SWITCHOFFSET(dateadd(minute, cast(CEILING(avg_elapsed_time_min) AS INT), start_time),  '-00:00')
+			ELSE SWITCHOFFSET(end_time, '-00:00')
 			END, 'yyyy-MM-dd HH:mm:ss')
 	,elapsed_time_min = format(CASE 
 			WHEN end_time IS NULL

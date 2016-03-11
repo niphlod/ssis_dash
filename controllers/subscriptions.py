@@ -127,7 +127,7 @@ def feed():
                 ['Warnings', entry.warnings],
             ])
             err_rows = msgs_dict[entry.execution_id]
-            messages = [[TDNW('Event Name'), TDNW('Message Time'), TDNW('Message'), TDNW('Package'),
+            messages = [[TDNW('Event Name'), TDNW('Message Time (UTC)'), TDNW('Message'), TDNW('Package'),
                         TDNW('Package Path'), TDNW('Subcomponent Name'), TDNW('Execution Path')]]
             for msg in err_rows:
                 messages.append(

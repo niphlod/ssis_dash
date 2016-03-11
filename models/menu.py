@@ -43,6 +43,7 @@ static_files = [
     'css/layout.css',
     'vendor/datatables/css/datatables.utils.min.css',
     'js/console.js',
+    'js/moment.min.js',
     'vendor/datatables/js/jquery.dataTables.min.js',
     'vendor/datatables/js/datatables.utils.min.js',
     'js/nprogress.js',

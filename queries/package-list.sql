@@ -27,8 +27,8 @@ WITH    cteWE
             e.package_name ,
             e.project_lsn ,
             e.status ,
-            start_time = FORMAT(e.start_time, 'yyyy-MM-dd HH:mm:ss') ,
-            end_time = FORMAT(e.end_time, 'yyyy-MM-dd HH:mm:ss') ,
+            start_time = FORMAT(SWITCHOFFSET(e.start_time, '-00:00'), 'yyyy-MM-dd HH:mm:ss') ,
+            end_time = FORMAT(SWITCHOFFSET(e.end_time, '-00:00'), 'yyyy-MM-dd HH:mm:ss') ,
             elapsed_time_min = FORMAT(DATEDIFF(ss, e.start_time, e.end_time)
                                       / 60., '#,0.00') ,
             k.warnings ,

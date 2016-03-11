@@ -34,8 +34,8 @@ WITH    ctePRE
             package_path ,
             execution_path ,
             message_source_name ,
-            pre_message_time = FORMAT(pre_message_time, 'yyyy-MM-dd HH:mm:ss') ,
-            post_message_time = FORMAT(post_message_time,
+            pre_message_time = FORMAT(SWITCHOFFSET(pre_message_time, '-00:00'), 'yyyy-MM-dd HH:mm:ss') ,
+            post_message_time = FORMAT(SWITCHOFFSET(post_message_time, '-00:00'),
                                        'yyyy-MM-dd HH:mm:ss') ,
             elapsed_time_min = DATEDIFF(mi, pre_message_time,
                                         post_message_time)

@@ -1,4 +1,4 @@
-var SSIS_RENDER = (function(_, Morris, console) {
+var SSIS_RENDER = (function(_, Morris, console, moment) {
 	'use strict';
 	_.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
 	var STATUS_CODES = {
@@ -36,6 +36,9 @@ var SSIS_RENDER = (function(_, Morris, console) {
 	var my = {};
 	my.init_env = function(env) {
 		my.ENV = env;
+	};
+	my.render_local_time = function(data) {
+		return moment.utc(data, 'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')
 	};
 	/*execution id - packages_list*/
 	my.texecution_id = _.template(
@@ -132,18 +135,9 @@ var SSIS_RENDER = (function(_, Morris, console) {
 		return rtn;
 	};
 
-	/*history start_time*/
-	my.render_history_start_time = function(data, type, row, meta) {
-		var rtn = row.start_time;
-		if (row.has_expected_values) {
-			rtn += '<span class="label label-warning">Estimate</span>';
-		}
-		return rtn;
-	};
-
 	/*history stop_time*/
 	my.render_history_end_time = function(data, type, row, meta) {
-		var rtn = row.end_time;
+		var rtn = my.render_local_time(row.end_time);
 		if (row.has_expected_values) {
 			rtn += '<span class="label label-warning">Estimate</span>';
 		}
@@ -166,6 +160,8 @@ var SSIS_RENDER = (function(_, Morris, console) {
 			});
 			_.extend(newrow, row);
 			newrow.key = key;
+			newrow.start_time = my.render_local_time(newrow.start_time);
+			newrow.end_time = my.render_local_time(newrow.end_time);
 			_newdata.push(newrow);
 		});
 		return [_newdata, genykeys];
@@ -182,6 +178,7 @@ var SSIS_RENDER = (function(_, Morris, console) {
 			hideHoverNull: true,
 			hoverCallback: function(index, options, content, row) {
 				var rtn = '<div class="morris-hover-row-label">' + _.escape(row.project_name + '\\' + row.package_name) + '</div>';
+				rtn += '<div class="morris-hover-row-label"> exec: ' + _.escape(row.execution_id) + '</div>';
 				if (!_.isNull(row.environment)) {
 					rtn += '<div class="morris-hover-row-label"> Env: ' + _.escape(row.environment) + '</div>';
 				}
@@ -193,7 +190,7 @@ var SSIS_RENDER = (function(_, Morris, console) {
 	};
 
 	return my;
-}(_, Morris, console));
+}(_, Morris, console, moment));
 
 
 var SSIS_ROUTER = (function(_, crossroads, console, URI, $) {
@@ -404,7 +401,8 @@ var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
 		columns: [{
 			title: 'Message Time',
 			data: 'message_time',
-			className: 'text-nowrap'
+			className: 'text-nowrap',
+			render: SSIS_RENDER.render_local_time
 		}, {
 			title: 'Message',
 			data: 'message'
@@ -448,7 +446,7 @@ var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
 		}, {
 			title: 'Start Time',
 			data: 'start_time',
-			render: SSIS_RENDER.render_history_start_time
+			render: SSIS_RENDER.render_local_time
 		}, {
 			title: 'Stop Time',
 			data: 'end_time',
@@ -483,10 +481,12 @@ var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
 			render: SSIS_RENDER.render_status
 		}, {
 			title: 'Start Time',
-			data: 'start_time'
+			data: 'start_time',
+			render: SSIS_RENDER.render_local_time
 		}, {
 			title: 'End Time',
-			data: 'end_time'
+			data: 'end_time',
+			render: SSIS_RENDER.render_local_time
 		}, {
 			title: 'Elapsed (Min)',
 			data: 'elapsed_time_min',
@@ -535,11 +535,13 @@ var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
 		}, {
 			title: 'Start Time',
 			data: 'pre_message_time',
-			className: 'text-nowrap'
+			className: 'text-nowrap',
+			render: SSIS_RENDER.render_local_time
 		}, {
 			title: 'Stop Time',
 			data: 'post_message_time',
-			className: 'text-nowrap'
+			className: 'text-nowrap',
+			render: SSIS_RENDER.render_local_time
 		}, {
 			title: 'Elapsed (Min)',
 			data: 'elapsed_time_min',
@@ -572,15 +574,18 @@ var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
 		}, {
 			title: 'Start Time',
 			data: 'pre_message_time',
-			className: 'text-nowrap'
+			className: 'text-nowrap',
+			render: SSIS_RENDER.render_local_time
 		}, {
 			title: 'Stop Time',
 			data: 'post_message_time',
-			className: 'text-nowrap'
+			className: 'text-nowrap',
+			render: SSIS_RENDER.render_local_time
 		}, {
 			title: 'Elapsed (Min)',
 			data: 'elapsed_time_min',
-			className: 'text-nowrap text-right'
+			className: 'text-nowrap text-right',
+			render: SSIS_RENDER.render_local_time
 		}, ]
 	};
 
