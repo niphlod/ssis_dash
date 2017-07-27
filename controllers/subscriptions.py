@@ -108,10 +108,10 @@ def feed():
     title += status != 'all' and ', status %s' % STATUS_CODES[status] or ''
     title += package != 'all' and ', package %s' % package or ''
     items = []
-    now = request.now.strftime('%Y%m%d%H%M%S')
     for entry in res:
+        now = request.utcnow.strftime('%Y%m%d%H%M%S')
         link = URL('console', 'overview', host=True, scheme='https', extension='', args=[request.args(0), 'folder', entry.folder_name, 'project',
-                   entry.project_name, 'status', 'all', 'package', entry.package_name, 'execution', entry.execution_id])
+                            entry.project_name, 'status', 'all', 'package', entry.package_name, 'execution', entry.execution_id])
         if entry.elapsed_time_min is None:
             guid = link + '@' + now
         else:
@@ -122,42 +122,48 @@ def feed():
         ]
         errors = None
         if entry.execution_id in msgs_dict:
+            errors = 0
+            warnings = 0
+            for m in msgs_dict[entry.execution_id]:
+                if m.event_name == 'OnWarning':
+                    warnings += 1
+                if m.event_name == 'OnError':
+                    errors += 1
             detailed_status.extend([
-                ['Errors', entry.errors],
-                ['Warnings', entry.warnings],
+                ['Errors', errors],
+                ['Warnings', warnings],
             ])
             err_rows = msgs_dict[entry.execution_id]
             messages = [[TDNW('Event Name'), TDNW('Message Time (UTC)'), TDNW('Message'), TDNW('Package'),
                         TDNW('Package Path'), TDNW('Subcomponent Name'), TDNW('Execution Path')]]
             for msg in err_rows:
-                messages.append(
-                    [TDNW(msg.event_name), TDNW(msg.message_time), TD(msg.message), TDNW(msg.package_name),
-                     TD(msg.package_path), TDNW(msg.subcomponent_name), TD(msg.execution_path)]
-                )
+                messages.append([TDNW(msg.event_name), TDNW(msg.message_time), TD(msg.message), TDNW(msg.package_name),
+                    TD(msg.package_path), TDNW(msg.subcomponent_name), TD(msg.execution_path)])
             errors = TABLE(
-                [TR([a for a in msg]) for msg in messages],
-                _border=1
-            )
+                [TR(
+                    [a for a in msg]
+                    ) for msg in messages]
+                ,_border=1)
         detailed_status = TABLE(
             [TR([TD(el) for el in row]) for row in detailed_status]
-        )
+            )
         if errors:
             detailed_status = detailed_status.xml() + '<hr />' + errors.xml()
         else:
             detailed_status = detailed_status.xml()
-        pubdate = request.utcnow
+        pubdate = request.now
         if entry.end_time:
             pubdate = datetime.datetime.strptime(entry.end_time, '%Y-%m-%d %H:%M:%S')
         items.append(
             CDATARSS2(
-                title="%s - %s - (%s)" % (entry.execution_id, entry.package_name, STATUS_CODES[entry.status]),
-                link=link,
-                author="%s/%s@%s" % (entry.folder_name, entry.project_name, request.args(0)),
-                guid=guid,
-                description=detailed_status,
-                pubDate=pubdate,
+               title="%s - %s - (%s)" % (entry.execution_id, entry.package_name, STATUS_CODES[entry.status]),
+               link=link,
+               author="%s/%s@%s" % (entry.folder_name, entry.project_name, request.args(0)),
+               guid=guid,
+               description=detailed_status,
+               pubDate=pubdate,
+               )
             )
-        )
     rss = rss2.RSS2(title=title,
                     link=URL(args=request.args, scheme='https', host=True),
                     description="Execution Packages",
@@ -165,6 +171,8 @@ def feed():
                     lastBuildDate=request.utcnow,
                     items=items)
     rtn = rss.to_xml(encoding='utf-8')
+    if not os.path.exists(os.path.dirname(fpath)):
+        os.makedirs(os.path.dirname(fpath))
     with open(fpath, 'wb') as g:
         g.write(rtn)
     try:
