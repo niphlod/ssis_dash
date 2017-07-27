@@ -51,6 +51,10 @@ The overview page is the "home page" for every SSISDB instance
 |            +------------------------------+  |
 |            |      executables             |  |
 |            +------------------------------+  |
+|                                              |
+|            +------------------------------+  |
+|            |      config                  |  |
+|            +------------------------------+  |
 +----------------------------------------------+
 ```
 Once accessed, the overview will show only the **main section**.
@@ -75,7 +79,7 @@ to be shown for that execution.
 The `detail section` will show errors and warning counters for that execution
 (`package kpi`). This block is shown also if you click on the `package` column.
 
-Every specific execution will show `messages`, `children` packages and `executables`.
+Every specific execution will show `messages`, `children` packages, `executables` and `configuaration`.
 
 Clicking on the <a><i class="fa fa-area-chart"></i></a> element next to project
 or package name will redirect to the [history](#history-page) point of view.
