@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2015 Niphlod <niphlod@gmail.com>
+# Copyright 2017 Niphlod <niphlod@gmail.com>
 #
 # This file is part of ssis_dash.
 #
