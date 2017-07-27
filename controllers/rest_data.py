@@ -77,9 +77,13 @@ def package_list():
             status = k
             break
     res = read_and_exec('package-list.sql', placeholders=(HOURSPAN, folder_pattern, project_name, package_pattern, status), as_dict=True, time_expire=60)
-
     return json(res)
 
+def package_config():
+    rargs = List(request.raw_args.split('/'))
+    execution = rargs(2) if rargs(1) == 'execution' else -1
+    res = read_and_exec('package-details-execution-values.sql', placeholders=(execution,), as_dict=True, time_expire=180)
+    return json(res)
 
 def package_kpi():
     rargs = List(request.raw_args.split('/'))
@@ -90,20 +94,19 @@ def package_kpi():
     folder_pattern = folder != 'all' and fixup_like_param(folder) or '%'
     project_name = project != 'all' and fixup_like_param(project) or '%'
     package_pattern = package != 'all' and fixup_like_param(package) or '%'
-
     execution = execution != 'all' and execution or -1
-
+    time_expire = 60
     if rargs(2) == 'details':
         execution = rargs(1)
-    res = read_and_exec('package-kpi.sql', placeholders=(HOURSPAN, folder_pattern, project_name, package_pattern, execution), as_dict=True, time_expire=60)
-
+        time_expire = 180
+    res = read_and_exec('package-kpi.sql', placeholders=(HOURSPAN, folder_pattern, project_name, package_pattern, execution), as_dict=True, time_expire=time_expire)
     return json(res[0])
 
 
 def package_info():
     rargs = List(request.raw_args.split('/'))
     execution = rargs(2) if rargs(1) == 'execution' else 0
-    res = read_and_exec('package-info.sql', placeholders = (execution,), as_dict=True)
+    res = read_and_exec('package-info.sql', placeholders = (execution,), as_dict=True, time_expire=180)
     res = massage_resultset(res)
     rtn = {}
     res = res[0]
@@ -117,14 +120,14 @@ def package_info():
 def package_children():
     rargs = List(request.raw_args.split('/'))
     execution = rargs(2) if rargs(1) == 'execution' else -1
-    res = read_and_exec('package-children.sql', placeholders=(execution,), as_dict=True)
+    res = read_and_exec('package-children.sql', placeholders=(execution,), as_dict=True, time_expire=180)
     return json(res)
 
 
 def package_executables():
     rargs = List(request.raw_args.split('/'))
     execution = rargs(2) if rargs(1) == 'execution' else -1
-    res = read_and_exec('package-executables.sql', placeholders=(execution,), as_dict=True)
+    res = read_and_exec('package-executables.sql', placeholders=(execution,), as_dict=True, time_expire=180)
 
     return json(res)
 
@@ -132,7 +135,7 @@ def package_executables():
 def package_details():
     rargs = List(request.raw_args.split('/'))
     execution = rargs(2) if rargs(1) == 'execution' else -1
-    res = read_and_exec('package-details.sql', placeholders=(execution,), as_dict=True)
+    res = read_and_exec('package-details.sql', placeholders=(execution,), as_dict=True, time_expire=180)
 
     return json(res)
 
