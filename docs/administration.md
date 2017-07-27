@@ -17,7 +17,7 @@ enviroments. You should instead read the [deployment chapter](http://web2py.com/
 on web2py's book (see Windows-->IIS section)
 
 ## Configuration
-All settings are stored into the appconfig.ini file at the root of the
+All settings are stored into the appconfig.ini file inside the private/ folder at the root of the
 application.
 
 A tipical config file looks like this
