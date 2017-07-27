@@ -38,7 +38,11 @@ var SSIS_RENDER = (function(_, Morris, console, moment) {
 		my.ENV = env;
 	};
 	my.render_local_time = function(data) {
-		return moment.utc(data, 'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')
+		if (!_.isNull(data)) {
+			return moment.utc(data, 'YYYY-MM-DD HH:mm:ss').local().format('YYYY-MM-DD HH:mm:ss')
+		} else {
+			return data
+		}
 	};
 	/*execution id - packages_list*/
 	my.texecution_id = _.template(
@@ -131,6 +135,15 @@ var SSIS_RENDER = (function(_, Morris, console, moment) {
 		rtn += my.render_status(data, type, row, meta);
 		if (row.has_expected_values) {
 			rtn += '<span class="label label-warning">' + row.percent_complete + '% Estimate)</span>';
+		}
+		return rtn;
+	};
+
+	/*history start_time*/
+	my.render_history_start_time = function(data, type, row, meta) {
+		var rtn = my.render_local_time(row.start_time);
+		if (row.has_expected_values) {
+			rtn += '<span class="label label-warning">Estimate</span>';
 		}
 		return rtn;
 	};
@@ -318,6 +331,7 @@ var SSIS_ROUTER = (function(_, crossroads, console, URI, $) {
 			$('#children').removeClass('hidden').addClass('show');
 			$('#executables').removeClass('hidden').addClass('show');
 			$('#messages').removeClass('hidden').addClass('show');
+			$('#config').removeClass('hidden').addClass('show');
 		}
 		if ((my.ENV.package_name == 'all') && (my.ENV.execution == 'all')) {
 			$('#package_kpi').addClass('hidden');
@@ -350,6 +364,7 @@ var SSIS_ROUTER = (function(_, crossroads, console, URI, $) {
 	my.restPackageExecutablesURL = resourceRouter.addRoute('../../rest_data/package_executables/:instance:/execution/:execution:');
 	my.restPackageDetailsURL = resourceRouter.addRoute('../../rest_data/package_details/:instance:/execution/:execution:');
 	my.restPackageInfoURL = resourceRouter.addRoute('../../rest_data/package_info/:instance:/execution/:execution:');
+	my.restPackageConfigURL = resourceRouter.addRoute('../../rest_data/package_config/:instance:/execution/:execution:');
 	my.restPackageHistoryURL = resourceRouter.addRoute('../../rest_data/package_history/:instance:/folder/:folder:/project/:project:/package/:package_name:');
 
 	my.feedURL = resourceRouter.addRoute('../../console/rssfeed/:instance:/folder/:folder:/project/:project:/status/:status:/package/:package_name:');
@@ -364,6 +379,7 @@ var SSIS_ROUTER = (function(_, crossroads, console, URI, $) {
 			'packageexecutables': my.restPackageExecutablesURL.interpolate(my.ENV),
 			'packagedetails': my.restPackageDetailsURL.interpolate(my.ENV),
 			'packageinfo': my.restPackageInfoURL.interpolate(my.ENV),
+			'packageconfig': my.restPackageConfigURL.interpolate(my.ENV),
 			'packagehistory': my.restPackageHistoryURL.interpolate(my.ENV),
 			'rss_feed' : my.feedURL.interpolate(my.ENV)
 		};
@@ -421,6 +437,38 @@ var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
 		}],
 	};
 
+	my.dt_config = {
+		'order': [],
+		buttons: [
+			'colvis', 'copy', 'excel'
+		],
+		columns: [{
+			title: 'Object Type',
+			data: 'object_type_desc',
+		}, {
+			title: 'Data Type',
+			data: 'parameter_data_type'
+		}, {
+			title: 'Name',
+			data: 'parameter_name'
+		}, {
+			title: 'Value',
+			data: 'parameter_value'
+		}, {
+			title: 'Sensitive',
+			data: 'sensitive'
+		}, {
+			title: 'Required',
+			data: 'required'
+		}, {
+			title: 'Value set',
+			data: 'value_set'
+		}, {
+			title: 'Runtime Override',
+			data: 'runtime_override'
+		}],
+	};
+
 	my.dt_history = {
 		'order': [],
 		buttons: [
@@ -446,7 +494,7 @@ var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
 		}, {
 			title: 'Start Time',
 			data: 'start_time',
-			render: SSIS_RENDER.render_local_time
+			render: SSIS_RENDER.render_history_start_time
 		}, {
 			title: 'Stop Time',
 			data: 'end_time',
@@ -476,6 +524,9 @@ var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
 			data: 'package_name',
 			render: SSIS_RENDER.render_package_name
 		}, {
+			title: 'Env',
+			data: 'environment'
+		}, {
 			title: 'Status',
 			data: 'status',
 			render: SSIS_RENDER.render_status
@@ -490,14 +541,6 @@ var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
 		}, {
 			title: 'Elapsed (Min)',
 			data: 'elapsed_time_min',
-			className: 'text-nowrap text-right'
-		}, {
-			title: 'Warnings',
-			data: 'warnings',
-			className: 'text-nowrap text-right'
-		}, {
-			title: 'Errors',
-			data: 'errors',
 			className: 'text-nowrap text-right'
 		}],
 		createdRow: function(row, data, dataIndex) {
@@ -584,8 +627,7 @@ var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
 		}, {
 			title: 'Elapsed (Min)',
 			data: 'elapsed_time_min',
-			className: 'text-nowrap text-right',
-			render: SSIS_RENDER.render_local_time
+			className: 'text-nowrap text-right'
 		}, ]
 	};
 
@@ -593,6 +635,7 @@ var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
 		dt.clear();
 		dt.rows.add(data);
 		dt.columns.adjust().responsive.recalc().draw();
+		dt.columns.adjust();
 		$(dt.table().container()).closest('.box').css('height', '').find('.overlay').addClass('hidden');
 	};
 
@@ -601,14 +644,18 @@ var SSIS_TABLES = (function(_, SSIS_RENDER, console, $) {
 		dt.clear();
 		pro.done(function(data) {
 			dt.rows.add(data);
-			dt.columns.adjust().draw(); //.responsive.recalc().draw();
+			dt.columns.adjust().responsive.recalc().draw();
+			dt.columns.adjust();
 			$(dt.table().container()).closest('.box').css('height', '').find('.overlay').addClass('hidden');
-		});
+		})
 	};
 
 	my.slice_details = function(data, event_type) {
 		var newdata = [];
 		switch (event_type) {
+			case 'all':
+				newdata = data;
+				break;
 			case 'warnings':
 				newdata = _.filter(data, function(element) {
 					return (element.event_name == 'OnWarning');
