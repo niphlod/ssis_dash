@@ -1,5 +1,32 @@
-<div class="box-header"><h3 class="box-title">Package: {{decodeURIComponent(env.folder)}} \ {{decodeURIComponent(env.project)}} : Execution {{env.execution}}</h3></div>
+<div class="box-header">
+  <h3 class="box-title">Package: {{decodeURIComponent(env.folder)}} \ {{decodeURIComponent(env.project)}} : Execution {{env.execution}}</h3>
+  {{#if (env.execution != 'all')}}
+  <div class="box-tools pull-right">
+    <a class="btn btn-navi btn-box-tool" data-widget="#messages" data-toggle="tooltip" title="Go to Messages"><i class="fa fa-comments"></i> Messages</a>
+    <a class="btn btn-navi btn-box-tool" data-widget="#children" data-toggle="tooltip" title="Go to Children"><i class="fa fa-archive"></i> Children</a>
+    <a class="btn btn-navi btn-box-tool" data-widget="#executables" data-toggle="tooltip" title="Go to Executables"><i class="fa fa-map-o"></i> Executables</a>
+    <a class="btn btn-navi btn-box-tool" data-widget="#config" data-toggle="tooltip" title="Go to Config"><i class="fa fa-cogs"></i> Config </a>
+  </div>
+  {{/if}}
+  <!-- /.box-tools -->
 <div class="box-body">
+  <div class="col-sm-6 col-lg-3">
+    <div class="info-box bg-aqua">
+      <span class="info-box-icon"><i class="fa fa-commenting-o"></i></span>
+      <div class="info-box-content">
+        <span class="info-box-text">ALL</span>
+        <span class="info-box-number">{{#with pkpi['all']}}{{.}}{{else}}0{{/with}}</span>
+        <div class="progress">
+        <hr />
+        </div>
+        <span class="progress-description">
+          {{#if (env.execution != 'all' && pkpi['all'])}}
+          <a on-click="filter_all" href="{{env.base_url}}/{{env.instance}}/folder/{{env.folder}}/project/{{env.project}}/status/{{env.status}}/package/{{env.package_name}}/execution/{{env.execution}}/all">View</a>
+          {{/if}}
+        </span>
+      </div>
+    </div>
+  </div>
   <div class="col-sm-6 col-lg-3">
     <div class="info-box bg-red">
       <span class="info-box-icon"><i class="fa fa-exclamation"></i></span>
@@ -17,9 +44,9 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-6 col-lg-3">
+  <div class="col-sm-6 col-lg-2">
     <div class="info-box bg-orange">
-      <span class="info-box-icon"><i class="fa fa-paper-question"></i></span>
+      <span class="info-box-icon"><i class="fa fa-question"></i></span>
       <div class="info-box-content">
         <span class="info-box-text">WARNINGS</span>
         <span class="info-box-number">{{#with pkpi['warnings']}}{{.}}{{else}}0{{/with}}</span>
@@ -34,11 +61,11 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-6 col-lg-3">
+  <div class="col-sm-6 col-lg-2">
     <div class="info-box bg-yellow">
       <span class="info-box-icon"><i class="fa fa-fire"></i></span>
       <div class="info-box-content">
-        <span class="info-box-text">MEMORY WARNINGS</span>
+        <span class="info-box-text">MEMORY</span>
         <span class="info-box-number">{{#with pkpi['memory_warnings']}}{{.}}{{else}}0{{/with}}</span>
         <div class="progress">
         <hr />
@@ -51,11 +78,11 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-6 col-lg-3">
+  <div class="col-sm-6 col-lg-2">
     <div class="info-box bg-yellow">
       <span class="info-box-icon"><i class="fa fa-magnet"></i></span>
       <div class="info-box-content">
-        <span class="info-box-text">DUPLICATE WARNINGS</span>
+        <span class="info-box-text">DUPLICATE</span>
         <span class="info-box-number">{{#with pkpi['duplicate_warnings']}}{{.}}{{else}}0{{/with}}</span>
         <div class="progress">
         <hr />

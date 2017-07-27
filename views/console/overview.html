@@ -24,7 +24,14 @@
         <div id="package_kpi" class="box hidden" style="height: 160px;">
         </div>
         <div id="messages" class="box" style="height: 520px;">
-    		<div class="box-header"><h2 class="box-title">Messages</h2></div>
+    		<div class="box-header"><h2 class="box-title">Messages</h2>
+    			<div class="box-tools pull-right">
+				  <a class="btn btn-navi btn-box-tool" data-widget="#children" data-toggle="tooltip" title="Go to Children"><i class="fa fa-archive"></i> Children</a>
+				  <a class="btn btn-navi btn-box-tool" data-widget="#executables" data-toggle="tooltip" title="Go to Executables"><i class="fa fa-map-o"></i> Executables</a>
+				  <a class="btn btn-navi btn-box-tool" data-widget="#config" data-toggle="tooltip" title="Go to Config"><i class="fa fa-cogs"></i> Config </a>
+				  <a class="btn btn-navi btn-box-tool" data-widget="#package_kpi" data-toggle="tooltip" title="Go to Top"><i class="fa fa-level-up"></i> Go to Top </a>
+                </div>
+    		</div>
     		<div class="box-body">
         		<table id="datatable_messages" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 				</table>
@@ -34,7 +41,14 @@
 			</div>
         </div>
         <div id="children" class="box" style="height: 520px;">
-    		<div class="box-header"><h2 class="box-title">Children</h2></div>
+    		<div class="box-header"><h2 class="box-title">Children</h2>
+    			<div class="box-tools pull-right">
+				  <a class="btn btn-navi btn-box-tool" data-widget="#messages" data-toggle="tooltip" title="Go to Messages"><i class="fa fa-comments"></i> Messages</a>
+				  <a class="btn btn-navi btn-box-tool" data-widget="#executables" data-toggle="tooltip" title="Go to Executables"><i class="fa fa-map-o"></i> Executables</a>
+				  <a class="btn btn-navi btn-box-tool" data-widget="#config" data-toggle="tooltip" title="Go to Config"><i class="fa fa-cogs"></i> Config </a>
+				  <a class="btn btn-navi btn-box-tool" data-widget="#package_kpi" data-toggle="tooltip" title="Go to Top"><i class="fa fa-level-up"></i> Go to Top </a>
+                </div>
+    		</div>
     		<div class="box-body">
         		<table id="datatable_children" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 				</table>
@@ -44,9 +58,33 @@
 			</div>
         </div>
         <div id="executables" class="box hidden" style="height: 520px;">
-    		<div class="box-header"><h2 class="box-title">Executables</h2></div>
+    		<div class="box-header"><h2 class="box-title">Executables</h2>
+    			<div class="box-tools pull-right">
+				  <a class="btn btn-navi btn-box-tool" data-widget="#messages" data-toggle="tooltip" title="Go to Messages"><i class="fa fa-comments"></i> Messages</a>
+				  <a class="btn btn-navi btn-box-tool" data-widget="#children" data-toggle="tooltip" title="Go to Children"><i class="fa fa-archive"></i> Children</a>
+				  <a class="btn btn-navi btn-box-tool" data-widget="#config" data-toggle="tooltip" title="Go to Config"><i class="fa fa-cogs"></i> Config </a>
+				  <a class="btn btn-navi btn-box-tool" data-widget="#package_kpi" data-toggle="tooltip" title="Go to Top"><i class="fa fa-level-up"></i> Go to Top </a>
+                </div>
+    		</div>
     		<div class="box-body">
 	    		<table id="datatable_executables" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+	    		</table>
+    		</div>
+    		<div class="overlay">
+				<i class="fa fa-refresh fa-spin"></i>
+			</div>
+        </div>
+        <div id="config" class="box hidden" style="height: 520px;">
+    		<div class="box-header"><h2 class="box-title">Config</h2>
+    			<div class="box-tools pull-right">
+				  <a class="btn btn-navi btn-box-tool" data-widget="#messages" data-toggle="tooltip" title="Go to Messages"><i class="fa fa-comments"></i> Messages</a>
+				  <a class="btn btn-navi btn-box-tool" data-widget="#children" data-toggle="tooltip" title="Go to Children"><i class="fa fa-archive"></i> Children</a>
+				  <a class="btn btn-navi btn-box-tool" data-widget="#executables" data-toggle="tooltip" title="Go to Executables"><i class="fa fa-map-o"></i> Executables</a>
+				  <a class="btn btn-navi btn-box-tool" data-widget="#package_kpi" data-toggle="tooltip" title="Go to Top"><i class="fa fa-level-up"></i> Go to Top </a>
+                </div>
+    		</div>
+    		<div class="box-body">
+	    		<table id="datatable_config" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 	    		</table>
     		</div>
     		<div class="overlay">
@@ -153,6 +191,13 @@ function page_init() {
 			change_url(e.node.pathname);
 			return false;
 		});
+		rpackage_kpi.on('filter_all', function(e) {
+			if(key.shift || key.ctrl) return true;
+			e.original.preventDefault();
+			SSIS_TABLES.fill_table(dt_details, SSIS_TABLES.slice_details(orig_data, 'all'));
+			change_url(e.node.pathname);
+			return false;
+		});
 		rpackage_kpi.on('filter_warnings', function(e) {
 			if(key.shift || key.ctrl) return true;
 			e.original.preventDefault();
@@ -187,6 +232,7 @@ function populate_execution_details() {
 		dt_children = $('#datatable_children').DataTable(SSIS_TABLES.dt_children);
 		dt_executables = $('#datatable_executables').DataTable(SSIS_TABLES.dt_executables);
 		dt_details = $('#datatable_messages').DataTable(SSIS_TABLES.dt_details);
+		dt_config = $('#datatable_config').DataTable(SSIS_TABLES.dt_config);
 		$.get(SSIS_ROUTER.restUrlFor('packagedetails'), function(data) {
 			orig_data = data;
 			var newdata = SSIS_TABLES.slice_details(data, ENV.event_name);
@@ -194,6 +240,7 @@ function populate_execution_details() {
 		});
 		SSIS_TABLES.fill_table_adv(dt_children, $.get(SSIS_ROUTER.restUrlFor('packagechildren')));
 		SSIS_TABLES.fill_table_adv(dt_executables, $.get(SSIS_ROUTER.restUrlFor('packageexecutables')));
+		SSIS_TABLES.fill_table_adv(dt_config, $.get(SSIS_ROUTER.restUrlFor('packageconfig')));
 	}
 }
 
@@ -253,6 +300,11 @@ $(function() {
 				window.location = data.feed_url;
 			})
 		}
+	});
+	$('#main-container').on('click', 'a.btn-navi', function(e) {
+		e.preventDefault()
+		scroll_to_el($(this).data('widget'))
+
 	});
 
 	/*keys to switch states*/
