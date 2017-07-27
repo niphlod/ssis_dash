@@ -36,6 +36,7 @@
     <script>
       Ractive.DEBUG = false;
       Ractive.load.baseUrl = '{{=URL('static', 'ractive_components', extension='')}}/';
+      $.fn.dataTable.Buttons.swfPath = '{{=URL('static', 'vendor/datatables/swf/flashExport.swf')}}';
     </script>
     {{block head}}{{end}}
   </head>
