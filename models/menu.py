@@ -27,7 +27,7 @@ response.meta.description = 'SSISDB monitoring'
 response.meta.keywords = 'SSISDB monitoring'
 response.meta.generator = 'Web2py Web Framework'
 
-response.static_version = '0.0.36'
+response.static_version = '0.0.50'
 response.static_version_urls = True
 
 response.menu = [
