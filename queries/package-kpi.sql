@@ -45,10 +45,17 @@ WITH    cteEID
                                              FROM   cteEID c )
                         AND em.event_name = 'OnInformation'
                         AND [message] LIKE '%memory allocation%'
+             ),
+        cteA
+          AS ( SELECT   [all] = COUNT(*)
+               FROM     [catalog].event_messages em
+               WHERE    em.operation_id IN ( SELECT c.execution_id
+                                             FROM   cteEID c )
              )
     SELECT  *
     FROM    cteE ,
             cteW ,
             cteDW ,
-            cteMW
+            cteMW ,
+            cteA
 OPTION  ( RECOMPILE )

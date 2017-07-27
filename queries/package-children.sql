@@ -35,10 +35,8 @@ WITH    ctePRE
             execution_path ,
             message_source_name ,
             pre_message_time = FORMAT(SWITCHOFFSET(pre_message_time, '-00:00'), 'yyyy-MM-dd HH:mm:ss') ,
-            post_message_time = FORMAT(SWITCHOFFSET(post_message_time, '-00:00'),
-                                       'yyyy-MM-dd HH:mm:ss') ,
-            elapsed_time_min = DATEDIFF(mi, pre_message_time,
-                                        post_message_time)
+            post_message_time = FORMAT(SWITCHOFFSET(post_message_time, '-00:00'), 'yyyy-MM-dd HH:mm:ss') ,
+            elapsed_time_min = DATEDIFF(mi, pre_message_time, post_message_time)
     FROM    cteFINAL
     WHERE   rn = 1
             AND CHARINDEX('\', execution_path, 2) > 0

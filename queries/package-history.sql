@@ -34,20 +34,20 @@ SELECT execution_id
 	,project_lsn
 	,environment
 	,[status]
-	,start_time = format(SWITCHOFFSET(start_time, '-00:00'),'yyyy-MM-dd HH:mm:ss')
-	,end_time = format(CASE 
+	,start_time = FORMAT(SWITCHOFFSET(start_time, '-00:00'),'yyyy-MM-dd HH:mm:ss')
+	,end_time = FORMAT(CASE
 			WHEN end_time IS NULL
-				THEN SWITCHOFFSET(dateadd(minute, cast(CEILING(avg_elapsed_time_min) AS INT), start_time),  '-00:00')
-			ELSE SWITCHOFFSET(end_time, '-00:00')
+				THEN SWITCHOFFSET(DATEADD(minute, cast(CEILING(avg_elapsed_time_min) AS INT), start_time),  '-00:00')
+ 			ELSE SWITCHOFFSET(end_time, '-00:00')
 			END, 'yyyy-MM-dd HH:mm:ss')
-	,elapsed_time_min = format(CASE 
+	,elapsed_time_min = FORMAT(CASE
 			WHEN end_time IS NULL
 				THEN avg_elapsed_time_min
 			ELSE elapsed_time_min
 			END, '#,0.00')
-	,avg_elapsed_time_min = format(avg_elapsed_time_min, '#,0.00')
-	,percent_complete = format(100 * (DATEDIFF(ss, start_time, SYSDATETIMEOFFSET()) / 60.) / avg_elapsed_time_min, '#,0.00')
-	,has_expected_values = CASE 
+	,avg_elapsed_time_min = FORMAT(avg_elapsed_time_min, '#,0.00')
+	,percent_complete = FORMAT(100 * (DATEDIFF(ss, start_time, SYSDATETIMEOFFSET()) / 60.) / avg_elapsed_time_min, '#,0.00')
+	,has_expected_values = CASE
 		WHEN end_time IS NULL
 			THEN 1
 		ELSE 0

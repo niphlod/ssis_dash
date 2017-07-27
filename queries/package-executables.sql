@@ -4,11 +4,13 @@ WITH    ctePRE
           AS ( SELECT   *
                FROM     catalog.event_messages em
                WHERE    em.event_name IN ( 'OnPreExecute' )
+               AND      operation_id = @executionIdFilter
              ),
         ctePOST
           AS ( SELECT   *
                FROM     catalog.event_messages em
                WHERE    em.event_name IN ( 'OnPostExecute' )
+               AND      operation_id = @executionIdFilter
              ),
         cteFINAL
           AS ( SELECT   rn = ROW_NUMBER() OVER ( PARTITION BY b.event_message_id ORDER BY e.event_message_id ) ,
@@ -34,10 +36,8 @@ WITH    ctePRE
             execution_path ,
             message_source_name ,
             pre_message_time = FORMAT(SWITCHOFFSET(pre_message_time, '-00:00'), 'yyyy-MM-dd HH:mm:ss') ,
-            post_message_time = FORMAT(SWITCHOFFSET(post_message_time, '-00:00'),
-                                       'yyyy-MM-dd HH:mm:ss') ,
-            elapsed_time_min = DATEDIFF(mi, pre_message_time,
-                                        post_message_time)
+            post_message_time = FORMAT(SWITCHOFFSET(post_message_time, '-00:00'), 'yyyy-MM-dd HH:mm:ss') ,
+            elapsed_time_min = DATEDIFF(mi, pre_message_time, post_message_time)
     FROM    cteFINAL
     WHERE   rn = 1
     ORDER BY event_message_id DESC

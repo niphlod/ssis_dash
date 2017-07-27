@@ -31,4 +31,4 @@ SELECT
 	   event_name
 FROM    [catalog].event_messages e
 inner join CTEex on CTEex.execution_id = e.operation_id
-WHERE   (event_name =  'OnWarning' OR event_name = 'OnError')
+--WHERE   (event_name =  'OnWarning' OR event_name = 'OnError')
